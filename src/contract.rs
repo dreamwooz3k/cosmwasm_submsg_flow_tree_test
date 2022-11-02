@@ -5,7 +5,7 @@ use cosmwasm_std::{
 };
 // use cw2::set_contract_version;
 
-//use crate::debug::print;
+use crate::debug::print;
 use crate::error::ContractError;
 use crate::msg::{ExecuteMsg, InstantiateMsg, QueryMsg};
 use crate::state::{NUMBER, NUMBER2};
@@ -43,8 +43,10 @@ pub fn execute_flow(deps: DepsMut, env: Env) -> Result<Response, ContractError> 
     let value = NUMBER.load(deps.storage).unwrap_or(0);
     NUMBER.save(deps.storage, &(value + 1))?;
     let value = NUMBER.load(deps.storage).unwrap_or(0);
+    print(deps.as_ref(), &value.to_string());
     if value < 20 {
         if value % 3 == 0 {
+            print(deps.as_ref(), "fuck1");
             let msgs1 = to_binary(&ExecuteMsg::Flow2 {})?;
             let msgs2 = to_binary(&ExecuteMsg::Flow {})?;
             Ok(Response::new()
@@ -60,6 +62,7 @@ pub fn execute_flow(deps: DepsMut, env: Env) -> Result<Response, ContractError> 
                     funds: vec![], 
                 })))
         } else {
+            print(deps.as_ref(), "fuck2");
             let msgs1 = to_binary(&ExecuteMsg::Flow {})?;
             Ok(Response::new()
                 .add_attribute("action", value.to_string())
@@ -76,7 +79,11 @@ pub fn execute_flow(deps: DepsMut, env: Env) -> Result<Response, ContractError> 
 
 pub fn execute_flow2(deps: DepsMut, env: Env) -> Result<Response, ContractError> {
     let value = NUMBER2.load(deps.storage).unwrap_or(0);
+    print(deps.as_ref(), &value.to_string());
+    NUMBER2.save(deps.storage, &(value + 1))?;
+    print(deps.as_ref(), "fuck3");
     if value < 3 {
+        print(deps.as_ref(), "fuck4");
         let msgs1 = to_binary(&ExecuteMsg::Flow2 {})?;
         let mut s = String::from(NUMBER.load(deps.storage)?.to_string());
         s.push_str("-");
@@ -89,6 +96,7 @@ pub fn execute_flow2(deps: DepsMut, env: Env) -> Result<Response, ContractError>
                 funds: vec![],
             })))
     } else {
+        //print(deps.as_ref(), "fuck5");
         let mut s = String::from(NUMBER.load(deps.storage)?.to_string());
         s.push_str("-3");
         NUMBER2.save(deps.storage, &(0))?;
